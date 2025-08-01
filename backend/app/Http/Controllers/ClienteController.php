@@ -20,7 +20,22 @@ class ClienteController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'nombres' => 'required|max:50',
+            'apellidos' => 'required|max:50',
+            'direccion' => 'required|max:255',
+            'celular' => 'nullable|max:50',
+            'nit' => 'required|max:50',
+        ]);
+
+        $cliente = Cliente::create($request->all());
+
+        $data = [
+            "mensaje" => "Cliente creado correctamente",
+            "cliente" => $cliente
+        ];
+
+        return response()->json($data, 201);
     }
 
     /**
@@ -28,7 +43,15 @@ class ClienteController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $cliente = Cliente::find($id);
+        if (!$cliente) {
+            $data = [
+                "mensaje" => "Cliente no encontrado"
+            ];
+            return response()->json($data, 404);
+        }
+
+        return response()->json($cliente, 200);
     }
 
     /**
@@ -36,7 +59,30 @@ class ClienteController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $cliente = Cliente::find($id);
+        if (!$cliente) {
+            $data = [
+                "mensaje" => "Cliente no encontrado"
+            ];
+            return response()->json($data, 404);
+        }
+
+        $request->validate([
+            'nombres' => 'required|max:50',
+            'apellidos' => 'required|max:50',
+            'direccion' => 'required|max:255',
+            'celular' => 'nullable|max:50',
+            'nit' => 'required|max:50',
+        ]);
+
+        $cliente->update($request->all());
+
+        $data = [
+            "mensaje" => "Cliente actualizado correctamente",
+            "cliente" => $cliente
+        ];
+
+        return response()->json($data, 200);
     }
 
     /**
@@ -44,6 +90,20 @@ class ClienteController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $cliente = Cliente::find($id);
+        if (!$cliente) {
+            $data = [
+                "mensaje" => "Cliente no encontrado"
+            ];
+            return response()->json($data, 404);
+        }
+
+        $cliente->delete();
+
+        $data = [
+            "mensaje" => "Cliente eliminado correctamente"
+        ];
+
+        return response()->json($data, 200);
     }
 }
